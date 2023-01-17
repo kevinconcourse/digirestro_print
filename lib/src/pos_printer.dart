@@ -15,7 +15,11 @@ class PosPrinter {
   PosPrinter({
     required this.printerType,
     this.paperSize = PaperSize.mm80,
-  });
+  }) {
+    if (printerType == PrinterType.bluetooth) {
+      bluetoothAndroid = BlueThermalPrinter.instance;
+    }
+  }
 
   final PaperSize? paperSize;
 
@@ -35,11 +39,10 @@ class PosPrinter {
 
   /// THIS WILL WORK ONLY FOR BLUETOOTH
   Future<List<BlueDevice>> scanForDevices() async {
+    /// We dont need to scan for lan printers because we have pre configuration of Lan.
     try {
       List<BlueDevice> pairedDeviceList = [];
 
-      /// We dont need to scan for lan printers because we have pre configuration of Lan.
-      bluetoothAndroid = BlueThermalPrinter.instance;
       if (!(await bluetoothAndroid!.isOn)!) {
         throw Exception('Please turn on Bluetooth');
       }
@@ -233,8 +236,7 @@ class PosPrinter {
         if (!_isConnected && selectedBluetoothDevice != null) {
           await connectToDevice(device: selectedBluetoothDevice);
         }
-        final bluetoothAndroid = BlueThermalPrinter.instance;
-        bluetoothAndroid.writeBytes(Uint8List.fromList(printerDataBytes));
+        bluetoothAndroid!.writeBytes(Uint8List.fromList(printerDataBytes));
       }
     } catch (e) {
       rethrow;
