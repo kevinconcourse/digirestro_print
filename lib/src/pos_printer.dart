@@ -35,22 +35,30 @@ class PosPrinter {
 
   /// THIS WILL WORK ONLY FOR BLUETOOTH
   Future<List<BlueDevice>> scanForDevices() async {
-    List<BlueDevice> pairedDeviceList = [];
+    try {
+      List<BlueDevice> pairedDeviceList = [];
 
-    /// We dont need to scan for lan printers because we have pre configuration of Lan.
-    bluetoothAndroid = BlueThermalPrinter.instance;
-    final List<BluetoothDevice> resultDevices =
-        await bluetoothAndroid!.getBondedDevices();
-    pairedDeviceList = resultDevices
-        .map(
-          (BluetoothDevice bluetoothDevice) => BlueDevice(
-            name: bluetoothDevice.name ?? '',
-            address: bluetoothDevice.address ?? '',
-            type: bluetoothDevice.type,
-          ),
-        )
-        .toList();
-    return pairedDeviceList;
+      /// We dont need to scan for lan printers because we have pre configuration of Lan.
+      bluetoothAndroid = BlueThermalPrinter.instance;
+      if (!(await bluetoothAndroid!.isOn)!) {
+        throw Exception('Please turn on Bluetooth');
+      }
+      bluetoothAndroid!.isOn;
+      final List<BluetoothDevice> resultDevices =
+          await bluetoothAndroid!.getBondedDevices();
+      pairedDeviceList = resultDevices
+          .map(
+            (BluetoothDevice bluetoothDevice) => BlueDevice(
+              name: bluetoothDevice.name ?? '',
+              address: bluetoothDevice.address ?? '',
+              type: bluetoothDevice.type,
+            ),
+          )
+          .toList();
+      return pairedDeviceList;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   // ************************ CONNECT TO DEVICES ************************
@@ -83,6 +91,7 @@ class PosPrinter {
         if (device == null) {
           return Future<ConnectionStatus>.value(ConnectionStatus.timeout);
         }
+        await bluetoothAndroid!.disconnect();
         selectedBluetoothDevice = device;
         final BluetoothDevice bluetoothDeviceAndroid = BluetoothDevice(
             selectedBluetoothDevice!.name, selectedBluetoothDevice!.address);
