@@ -91,9 +91,6 @@ class PosPrinter {
         if (device == null) {
           return Future<ConnectionStatus>.value(ConnectionStatus.timeout);
         }
-        if ((await bluetoothAndroid!.isConnected)!) {
-          await bluetoothAndroid!.disconnect();
-        }
         selectedBluetoothDevice = device;
         final BluetoothDevice bluetoothDeviceAndroid = BluetoothDevice(
             selectedBluetoothDevice!.name, selectedBluetoothDevice!.address);
