@@ -28,7 +28,7 @@ class PosPrinter {
   /// Selected device after connecting
   late BlueDevice? selectedBluetoothDevice;
 
-  late Socket _socket;
+  Socket? _socket;
   late Generator _generator;
 
   // ************************ Scan Bluetooth Device ************************
@@ -71,7 +71,7 @@ class PosPrinter {
           return Future<ConnectionStatus>.value(ConnectionStatus.timeout);
         }
         _socket = await Socket.connect(ipAddress, port, timeout: timeout);
-        _socket.add(_generator.reset());
+        _socket!.add(_generator.reset());
         _isConnected = true;
         return Future<ConnectionStatus>.value(ConnectionStatus.connected);
       } else
@@ -113,7 +113,7 @@ class PosPrinter {
       /// LAN
       ///
       if (printerType == PrinterType.lan) {
-        _socket.destroy();
+        _socket?.destroy();
         if (delayMs != null) {
           await Future.delayed(Duration(milliseconds: delayMs), () => null);
         }
@@ -143,7 +143,7 @@ class PosPrinter {
     final listData = _generator.hr(ch: ch, linesAfter: linesAfter);
 
     if (printerType == PrinterType.lan) {
-      _socket.add(listData);
+      _socket!.add(listData);
     }
     if (printerType == PrinterType.bluetooth) {
       printerDataBytes += listData;
@@ -154,7 +154,7 @@ class PosPrinter {
     final listData = _generator.cut(mode: mode);
 
     if (printerType == PrinterType.lan) {
-      _socket.add(listData);
+      _socket!.add(listData);
     }
     if (printerType == PrinterType.bluetooth) {
       printerDataBytes += listData;
@@ -165,7 +165,7 @@ class PosPrinter {
     final listData = _generator.feed(n);
 
     if (printerType == PrinterType.lan) {
-      _socket.add(listData);
+      _socket!.add(listData);
     }
     if (printerType == PrinterType.bluetooth) {
       printerDataBytes += listData;
@@ -176,7 +176,7 @@ class PosPrinter {
     final listData = _generator.emptyLines(n);
 
     if (printerType == PrinterType.lan) {
-      _socket.add(listData);
+      _socket!.add(listData);
     }
     if (printerType == PrinterType.bluetooth) {
       printerDataBytes += listData;
@@ -197,7 +197,7 @@ class PosPrinter {
         maxCharsPerLine: maxCharsPerLine);
 
     if (printerType == PrinterType.lan) {
-      _socket.add(listData);
+      _socket!.add(listData);
     }
     if (printerType == PrinterType.bluetooth) {
       printerDataBytes += listData;
@@ -208,7 +208,7 @@ class PosPrinter {
     final listData = _generator.row(cols);
 
     if (printerType == PrinterType.lan) {
-      _socket.add(listData);
+      _socket!.add(listData);
     }
     if (printerType == PrinterType.bluetooth) {
       printerDataBytes += listData;
