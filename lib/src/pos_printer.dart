@@ -233,7 +233,8 @@ class PosPrinter {
         if (!_isConnected && selectedBluetoothDevice != null) {
           await connectToDevice(device: selectedBluetoothDevice);
         }
-        bluetoothAndroid?.writeBytes(Uint8List.fromList(printerDataBytes));
+        final bluetoothAndroid = BlueThermalPrinter.instance;
+        bluetoothAndroid.writeBytes(Uint8List.fromList(printerDataBytes));
       }
     } catch (e) {
       rethrow;
