@@ -102,11 +102,13 @@ class PosPrinter {
             selectedBluetoothDevice!.address)))!) {
           _isConnected = true;
           selectedBluetoothDevice!.connected = true;
+          printerDataBytes = [];
           return Future<ConnectionStatus>.value(ConnectionStatus.connected);
         }
         await bluetoothAndroid?.connect(bluetoothDeviceAndroid);
         _isConnected = true;
         selectedBluetoothDevice!.connected = true;
+        printerDataBytes = [];
         return Future<ConnectionStatus>.value(ConnectionStatus.connected);
       }
 
