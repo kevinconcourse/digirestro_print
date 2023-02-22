@@ -18,7 +18,7 @@ packages:
     source: hosted
     version: "2.10.0"
   blue_thermal_printer:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: blue_thermal_printer
       sha256: "2b8a93f90be335494d2172dbc869c31b95638087f89591b4ad69fd9305eaf80b"
@@ -89,23 +89,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.17.2"
-  cupertino_icons:
-    dependency: "direct main"
-    description:
-      name: cupertino_icons
-      sha256: e35129dc44c9118cee2a5603506d823bab99c68393879edb440e0090d07586be
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.5"
-  digirestro_print:
-    dependency: "direct main"
-    description:
-      path: ".."
-      relative: true
-    source: path
-    version: "0.0.1"
   esc_pos_printer:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: esc_pos_printer
       sha256: "312b05f909f3f7dd1e6a3332cf384dcee2c3a635138823654cd9c0133d8b5c45"
@@ -235,7 +220,7 @@ packages:
     source: hosted
     version: "5.1.0"
   ping_discover_network_forked:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: ping_discover_network_forked
       sha256: d3975c4f3fbaa388f78fb4037ad9c33059d8e2ec0e804ed45e05277d2451fe77
