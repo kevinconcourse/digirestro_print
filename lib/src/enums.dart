@@ -1,4 +1,4 @@
-enum PrinterType { bluetooth, lan }
+enum PrinterType { bluetooth, lan, imin }
 
 enum ConnectionStatus {
   timeout,

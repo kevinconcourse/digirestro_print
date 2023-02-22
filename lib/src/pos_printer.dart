@@ -73,10 +73,10 @@ class PosPrinter {
     String? ipAddress,
   }) async {
     try {
-      /// FOR LAN (WIFI)
-      ///
       final profile = await CapabilityProfile.load();
       _generator = Generator(paperSize!, profile, spaceBetweenRows: 5);
+
+      /// CONNECTION TO LAN
       if (printerType == PrinterType.lan) {
         if (ipAddress == null || ipAddress.isEmpty) {
           return Future<ConnectionStatus>.value(ConnectionStatus.timeout);
@@ -85,11 +85,10 @@ class PosPrinter {
         _socket!.add(_generator.reset());
         _isConnected = true;
         return Future<ConnectionStatus>.value(ConnectionStatus.connected);
-      } else
+      }
 
-      /// FOR BLUETOOTH
-      ///
-      if (printerType == PrinterType.bluetooth) {
+      /// CONNECTION TO BLUETOOTH
+      else if (printerType == PrinterType.bluetooth) {
         /// RETURN IF DEVICE IS NULL
         if (device == null) {
           return Future<ConnectionStatus>.value(ConnectionStatus.timeout);
@@ -110,11 +109,11 @@ class PosPrinter {
         selectedBluetoothDevice!.connected = true;
         printerDataBytes = [];
         return Future<ConnectionStatus>.value(ConnectionStatus.connected);
-      }
-
-      /// RETURN TIMEOUT EXCEPTION
-      ///
-      else {
+      } else if (printerType == PrinterType.imin) {
+        /// CONNECTION TO iMIN Device
+        return Future<ConnectionStatus>.value(ConnectionStatus.connected);
+      } else {
+        /// RETURN TIMEOUT EXCEPTION
         _isConnected = false;
         return Future<ConnectionStatus>.value(ConnectionStatus.timeout);
       }

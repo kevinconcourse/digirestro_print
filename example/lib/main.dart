@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 posPrinter.row([
                   PosColumn(text: 'Order No.:', width: 6),
                   PosColumn(
-                    text: "TDO-123123",
+                    text: 'TDO-123123',
                     width: 6,
                     styles: const PosStyles(
                       align: PosAlign.right,
@@ -141,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 posPrinter.row([
                   PosColumn(text: 'Captain Name:', width: 6),
                   PosColumn(
-                    text: "Admin",
+                    text: 'Admin',
                     width: 6,
                     styles: const PosStyles(
                       align: PosAlign.right,
