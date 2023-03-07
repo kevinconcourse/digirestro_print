@@ -71,21 +71,21 @@ class PosPrinter {
             )
             .toList();
       } else if (Platform.isIOS) {
-        final fb.FlutterBluePlus bluetoothIOS = fb.FlutterBluePlus.instance;
+        bluetoothIos = fb.FlutterBluePlus.instance;
         final List<fb.BluetoothDevice> resultDevices = <fb.BluetoothDevice>[];
         if (!await fb.FlutterBluePlus.instance.isOn) {
           throw Exception('Please turn on Bluetooth');
         }
-        await bluetoothIOS.startScan(
+        await bluetoothIos?.startScan(
           timeout: const Duration(seconds: 5),
         );
-        bluetoothIOS.scanResults.listen((List<fb.ScanResult> scanResults) {
+        bluetoothIos?.scanResults.listen((List<fb.ScanResult> scanResults) {
           for (final fb.ScanResult scanResult in scanResults) {
             resultDevices.add(scanResult.device);
           }
         });
 
-        await bluetoothIOS.stopScan();
+        await bluetoothIos?.stopScan();
         pairedDeviceList = resultDevices
             .toSet()
             .toList()
