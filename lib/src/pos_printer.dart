@@ -84,7 +84,7 @@ class PosPrinter {
         //     resultDevices.add(scanResult.device);
         //   }
         // });
-        final connectedDevices = await bluetoothIos?.bondedDevices;
+        final connectedDevices = await bluetoothIos?.connectedDevices;
         resultDevices.addAll(connectedDevices ?? []);
         await bluetoothIos?.stopScan();
         pairedDeviceList = resultDevices
