@@ -7,7 +7,6 @@ import 'package:digirestro_print/src/models/device.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fb;
 import 'package:flutter_blue_plus/gen/flutterblueplus.pb.dart' as proto;
-import 'package:image/image.dart';
 
 class PosPrinter {
   /// This field is library to handle in Android Platform
@@ -85,7 +84,7 @@ class PosPrinter {
         //     resultDevices.add(scanResult.device);
         //   }
         // });
-        final connectedDevices = await bluetoothIos?.bondedDevices;
+        final connectedDevices = await bluetoothIos?.connectedDevices;
         resultDevices.addAll(connectedDevices ?? []);
         await bluetoothIos?.stopScan();
         pairedDeviceList = resultDevices
@@ -116,7 +115,7 @@ class PosPrinter {
   }) async {
     try {
       final profile = await CapabilityProfile.load();
-      _generator = Generator(paperSize!, profile, spaceBetweenRows: 40);
+      _generator = Generator(paperSize!, profile, spaceBetweenRows: 5);
 
       /// CONNECTION TO [LAN]
       if (printerType == PrinterType.lan) {
@@ -295,23 +294,6 @@ class PosPrinter {
     }
   }
 
-  void image(
-    Uint8List imageBytes,
-  ) {
-    try {
-      final Uint8List bytes = imageBytes;
-      final Image image = decodeImage(bytes)!;
-
-      final listData = _generator.image(image);
-
-      if (printerType == PrinterType.lan) {
-        _socket!.add(listData);
-      }
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   void row(List<PosColumn> cols) {
     final listData = _generator.row(cols);
 
@@ -320,17 +302,6 @@ class PosPrinter {
     }
     if (printerType == PrinterType.bluetooth) {
       printerDataBytes += listData;
-    }
-  }
-
-  Future<void> printImage({required Uint8List bytes}) async {
-    try {
-      if (Platform.isAndroid) {
-        bluetoothAndroid!.printImageBytes(bytes);
-        bluetoothAndroid!.paperCut();
-      }
-    } catch (e) {
-      rethrow;
     }
   }
 
@@ -346,7 +317,6 @@ class PosPrinter {
         }
         if (Platform.isAndroid) {
           bluetoothAndroid!.writeBytes(Uint8List.fromList(printerDataBytes));
-          bluetoothAndroid!.paperCut();
         } else {
           final List<fb.BluetoothService> bluetoothServices =
               await _bluetoothDeviceIOS?.discoverServices() ??
