@@ -329,7 +329,7 @@ class PosPrinter {
     try {
       if (Platform.isAndroid) {
         bluetoothAndroid!.printImageBytes(bytes);
-        bluetoothAndroid!.paperCut();
+        bluetoothAndroid!.printNewLine();
       }
     } catch (e) {
       rethrow;
