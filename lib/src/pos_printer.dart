@@ -115,7 +115,7 @@ class PosPrinter {
   }) async {
     try {
       final profile = await CapabilityProfile.load();
-      _generator = Generator(paperSize!, profile, spaceBetweenRows: 5);
+      _generator = Generator(paperSize!, profile, spaceBetweenRows: 40);
 
       /// CONNECTION TO [LAN]
       if (printerType == PrinterType.lan) {
@@ -294,6 +294,23 @@ class PosPrinter {
     }
   }
 
+  // void image(
+  //   Uint8List imageBytes,
+  // ) {
+  //   try {
+  //     final Uint8List bytes = imageBytes;
+  //     final Image image = decodeImage(bytes)!;
+
+  //     final listData = _generator.image(image);
+
+  //     if (printerType == PrinterType.lan) {
+  //       _socket!.add(listData);
+  //     }
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
+
   void row(List<PosColumn> cols) {
     final listData = _generator.row(cols);
 
@@ -302,6 +319,17 @@ class PosPrinter {
     }
     if (printerType == PrinterType.bluetooth) {
       printerDataBytes += listData;
+    }
+  }
+
+  Future<void> printImage({required Uint8List bytes}) async {
+    try {
+      if (Platform.isAndroid) {
+        bluetoothAndroid!.printImageBytes(bytes);
+        bluetoothAndroid!.paperCut();
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -317,6 +345,7 @@ class PosPrinter {
         }
         if (Platform.isAndroid) {
           bluetoothAndroid!.writeBytes(Uint8List.fromList(printerDataBytes));
+          bluetoothAndroid!.paperCut();
         } else {
           final List<fb.BluetoothService> bluetoothServices =
               await _bluetoothDeviceIOS?.discoverServices() ??
