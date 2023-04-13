@@ -235,9 +235,7 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    if (printerType == PrinterType.bluetooth) {
-      printerDataBytes += listData;
-    }
+    printerDataBytes += listData;
   }
 
   void cut({PosCutMode mode = PosCutMode.full}) {
@@ -246,9 +244,8 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    if (printerType == PrinterType.bluetooth) {
-      printerDataBytes += listData;
-    }
+
+    printerDataBytes += listData;
   }
 
   void feed(int n) {
@@ -257,9 +254,9 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    if (printerType == PrinterType.bluetooth) {
-      printerDataBytes += listData;
-    }
+    // if (printerType == PrinterType.bluetooth) {
+    // }
+    printerDataBytes += listData;
   }
 
   void emptyLines(int n) {
@@ -268,9 +265,9 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    if (printerType == PrinterType.bluetooth) {
-      printerDataBytes += listData;
-    }
+    // if (printerType == PrinterType.bluetooth) {
+    // }
+    printerDataBytes += listData;
   }
 
   void text(
@@ -289,9 +286,9 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    if (printerType == PrinterType.bluetooth) {
-      printerDataBytes += listData;
-    }
+    // if (printerType == PrinterType.bluetooth) {
+    // }
+    printerDataBytes += listData;
   }
 
   // void image(
@@ -317,9 +314,9 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    if (printerType == PrinterType.bluetooth) {
-      printerDataBytes += listData;
-    }
+    // if (printerType == PrinterType.bluetooth) {
+    // }
+    printerDataBytes += listData;
   }
 
   Future<void> printImage({required Uint8List bytes}) async {
