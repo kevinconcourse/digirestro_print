@@ -339,3 +339,4 @@ class PosPrinter {
     }
   }
 }
+// TEST
