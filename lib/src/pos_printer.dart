@@ -7,6 +7,7 @@ import 'package:digirestro_print/src/models/device.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fb;
 import 'package:flutter_blue_plus/gen/flutterblueplus.pb.dart' as proto;
+import 'package:image/image.dart';
 
 class PosPrinter {
   /// This field is library to handle in Android Platform
@@ -273,6 +274,24 @@ class PosPrinter {
     }
   }
 
+  void image(Uint8List imageBytes, [PosAlign alignImage = PosAlign.center]) {
+    if (printerType == PrinterType.bluetooth ||
+        printerType == PrinterType.imin) {
+      bluetoothAndroid!.printImageBytes(imageBytes);
+    }
+    if (printerType == PrinterType.lan) {
+      final Image? image = decodeImage(imageBytes);
+
+      ///TEST
+      if (image != null) {
+        _socket!.add(_generator.image(
+          image,
+          align: alignImage,
+        ));
+      }
+    }
+  }
+
   void text(
     String text, {
     PosStyles styles = const PosStyles(),
@@ -339,4 +358,3 @@ class PosPrinter {
     }
   }
 }
-// TEST
