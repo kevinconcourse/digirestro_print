@@ -277,9 +277,10 @@ class PosPrinter {
   void image(Uint8List imageBytes, [PosAlign alignImage = PosAlign.center]) {
     if (printerType == PrinterType.bluetooth ||
         printerType == PrinterType.imin) {
-      bluetoothAndroid!.printImageBytes(imageBytes);
-      bluetoothAndroid!.printNewLine();
-      bluetoothAndroid!.paperCut();
+      printerDataBytes += imageBytes;
+      // bluetoothAndroid!.printImageBytes(imageBytes);
+      // bluetoothAndroid!.printNewLine();
+      // bluetoothAndroid!.paperCut();
     }
     if (printerType == PrinterType.lan) {
       final Image? image = decodeImage(imageBytes);
