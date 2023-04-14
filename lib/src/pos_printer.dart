@@ -279,7 +279,7 @@ class PosPrinter {
     if (printerType == PrinterType.bluetooth ||
         printerType == PrinterType.imin) {
       this.imageBytes = imageBytes;
-      // bluetoothAndroid!.printImageBytes(imageBytes);
+      bluetoothAndroid!.printImageBytes(imageBytes);
       // bluetoothAndroid!.printNewLine();
       // bluetoothAndroid!.paperCut();
     }
@@ -339,10 +339,6 @@ class PosPrinter {
           await connectToDevice(device: selectedBluetoothDevice);
         }
         if (Platform.isAndroid) {
-          if (imageBytes != null) {
-            bluetoothAndroid!.printImageBytes(imageBytes!);
-            bluetoothAndroid!.printNewLine();
-          }
           bluetoothAndroid!.writeBytes(Uint8List.fromList(printerDataBytes));
         } else {
           final List<fb.BluetoothService> bluetoothServices =
