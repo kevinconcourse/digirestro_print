@@ -275,11 +275,15 @@ class PosPrinter {
   }
 
   Uint8List? imageBytes;
-  void image(Uint8List imageBytes, [PosAlign alignImage = PosAlign.center]) {
+  Future<void> image(Uint8List imageBytes,
+      [PosAlign alignImage = PosAlign.center]) async {
     if (printerType == PrinterType.bluetooth ||
         printerType == PrinterType.imin) {
       this.imageBytes = imageBytes;
       bluetoothAndroid!.printImageBytes(imageBytes);
+      bluetoothAndroid!.printNewLine();
+      final profile = await CapabilityProfile.load();
+      _generator = Generator(paperSize!, profile, spaceBetweenRows: 5);
       // bluetoothAndroid!.printNewLine();
       // bluetoothAndroid!.paperCut();
     }
