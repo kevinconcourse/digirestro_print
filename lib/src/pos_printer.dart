@@ -298,6 +298,24 @@ class PosPrinter {
     }
   }
 
+  void qrCode(
+    String qrCodeText, {
+    PosAlign align = PosAlign.center,
+    QRSize size = QRSize.Size4,
+    QRCorrection cor = QRCorrection.L,
+  }) {
+    if (qrCodeText.isEmpty) {
+      return;
+    }
+    if (printerType == PrinterType.bluetooth ||
+        printerType == PrinterType.imin) {
+      /// 1 Stands for Align Center
+      bluetoothAndroid!.printQRcode(qrCodeText, 200, 200, 1);
+    }
+    _socket!
+        .add(_generator.qrcode(qrCodeText, align: align, size: size, cor: cor));
+  }
+
   void text(
     String text, {
     PosStyles styles = const PosStyles(),
