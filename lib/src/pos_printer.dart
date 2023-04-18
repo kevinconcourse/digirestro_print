@@ -312,8 +312,10 @@ class PosPrinter {
       /// 1 Stands for Align Center
       bluetoothAndroid!.printQRcode(qrCodeText, 200, 200, 1);
     }
-    _socket!
-        .add(_generator.qrcode(qrCodeText, align: align, size: size, cor: cor));
+    if (printerType == PrinterType.lan) {
+      _socket!.add(
+          _generator.qrcode(qrCodeText, align: align, size: size, cor: cor));
+    }
   }
 
   void text(
