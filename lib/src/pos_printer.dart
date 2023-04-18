@@ -316,6 +316,8 @@ class PosPrinter {
         height,
         1,
       );
+      bluetoothAndroid!.printNewLine();
+      bluetoothAndroid!.paperCut();
       final profile = await CapabilityProfile.load();
       _generator = Generator(paperSize!, profile, spaceBetweenRows: 5);
     }
