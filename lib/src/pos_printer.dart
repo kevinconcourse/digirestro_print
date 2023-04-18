@@ -274,12 +274,10 @@ class PosPrinter {
     }
   }
 
-  Uint8List? imageBytes;
   Future<void> image(Uint8List imageBytes,
       [PosAlign alignImage = PosAlign.center]) async {
     if (printerType == PrinterType.bluetooth ||
         printerType == PrinterType.imin) {
-      this.imageBytes = imageBytes;
       bluetoothAndroid!.printImageBytes(imageBytes);
       bluetoothAndroid!.printNewLine();
       final profile = await CapabilityProfile.load();
@@ -298,14 +296,14 @@ class PosPrinter {
     }
   }
 
-  void qrCode(
+  Future<void> qrCode(
     String qrCodeText, {
     PosAlign align = PosAlign.center,
     QRSize size = QRSize.Size4,
     QRCorrection cor = QRCorrection.L,
     int width = 300,
     int height = 300,
-  }) {
+  }) async {
     if (qrCodeText.isEmpty) {
       return;
     }
@@ -318,6 +316,8 @@ class PosPrinter {
         height,
         1,
       );
+      final profile = await CapabilityProfile.load();
+      _generator = Generator(paperSize!, profile, spaceBetweenRows: 5);
     }
     if (printerType == PrinterType.lan) {
       _socket!.add(
