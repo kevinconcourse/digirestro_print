@@ -303,6 +303,8 @@ class PosPrinter {
     PosAlign align = PosAlign.center,
     QRSize size = QRSize.Size4,
     QRCorrection cor = QRCorrection.L,
+    int width = 300,
+    int height = 300,
   }) {
     if (qrCodeText.isEmpty) {
       return;
@@ -310,7 +312,12 @@ class PosPrinter {
     if (printerType == PrinterType.bluetooth ||
         printerType == PrinterType.imin) {
       /// 1 Stands for Align Center
-      bluetoothAndroid!.printQRcode(qrCodeText, 200, 200, 1);
+      bluetoothAndroid!.printQRcode(
+        qrCodeText,
+        width,
+        height,
+        1,
+      );
     }
     if (printerType == PrinterType.lan) {
       _socket!.add(
