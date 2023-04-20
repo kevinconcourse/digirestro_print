@@ -377,7 +377,7 @@ class PosPrinter {
         if (Platform.isAndroid) {
           bluetoothAndroid!.writeBytes(Uint8List.fromList(printerDataBytes));
           if (!hasQr) {
-            cut();
+            bluetoothAndroid!.paperCut();
           }
         } else {
           final List<fb.BluetoothService> bluetoothServices =
