@@ -364,7 +364,7 @@ class PosPrinter {
     }
   }
 
-  Future<void> printReceipt() async {
+  Future<void> printReceipt([bool hasQr = false]) async {
     try {
       if (printerType == PrinterType.bluetooth) {
         if (selectedBluetoothDevice == null) {
@@ -376,6 +376,9 @@ class PosPrinter {
         }
         if (Platform.isAndroid) {
           bluetoothAndroid!.writeBytes(Uint8List.fromList(printerDataBytes));
+          if (!hasQr) {
+            cut();
+          }
         } else {
           final List<fb.BluetoothService> bluetoothServices =
               await _bluetoothDeviceIOS?.discoverServices() ??
