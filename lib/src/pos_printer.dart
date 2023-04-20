@@ -320,6 +320,7 @@ class PosPrinter {
       bluetoothAndroid!.printNewLine();
       bluetoothAndroid!.printNewLine();
       bluetoothAndroid!.printNewLine();
+      bluetoothAndroid!.paperCut();
       // bluetoothAndroid!.disconnect();
       // connectToDevice(device: selectedBluetoothDevice);
       final profile = await CapabilityProfile.load();
