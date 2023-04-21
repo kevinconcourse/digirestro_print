@@ -377,6 +377,8 @@ class PosPrinter {
         if (Platform.isAndroid) {
           bluetoothAndroid!.writeBytes(Uint8List.fromList(printerDataBytes));
           if (!hasQr) {
+            bluetoothAndroid!.printNewLine();
+            bluetoothAndroid!.printNewLine();
             bluetoothAndroid!.paperCut();
           }
         } else {
