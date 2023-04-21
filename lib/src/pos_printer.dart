@@ -379,6 +379,8 @@ class PosPrinter {
           if (!hasQr) {
             bluetoothAndroid!.printNewLine();
             bluetoothAndroid!.printNewLine();
+            bluetoothAndroid!.printNewLine();
+            bluetoothAndroid!.printNewLine();
             bluetoothAndroid!.paperCut();
           }
         } else {
