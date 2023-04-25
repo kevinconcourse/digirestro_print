@@ -377,6 +377,9 @@ class PosPrinter {
           await connectToDevice(device: selectedBluetoothDevice);
         }
         if (Platform.isAndroid) {
+          //TODO
+          final temp = Uint8List.fromList(printerDataBytes);
+          log(temp.toString(), name: 'BITMAP');
           bluetoothAndroid!.writeBytes(Uint8List.fromList(printerDataBytes));
           if (!hasQr) {
             bluetoothAndroid!.paperCut();
