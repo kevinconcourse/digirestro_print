@@ -284,8 +284,7 @@ class PosPrinter {
       await bluetoothAndroid!.printImageBytes(imageBytes);
     }
     if (printerType == PrinterType.lan) {
-      final profile = await CapabilityProfile.load();
-      final generator = Generator(paperSize!, profile, spaceBetweenRows: 5);
+      final generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
       final Image? image = decodeImage(imageBytes);
 
       ///TEST
