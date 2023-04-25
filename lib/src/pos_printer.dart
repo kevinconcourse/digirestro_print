@@ -31,6 +31,7 @@ class PosPrinter {
   }
 
   final PaperSize? paperSize;
+  CapabilityProfile? profile;
 
   /// State to get printer is connected
   bool _isConnected = false;
@@ -115,8 +116,8 @@ class PosPrinter {
     String? ipAddress,
   }) async {
     try {
-      final profile = await CapabilityProfile.load();
-      _generator = Generator(paperSize!, profile, spaceBetweenRows: 5);
+      profile = await CapabilityProfile.load();
+      _generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
 
       /// CONNECTION TO [LAN]
       if (printerType == PrinterType.lan) {
@@ -274,16 +275,15 @@ class PosPrinter {
     }
   }
 
-  Future<void> image(Uint8List imageBytes,
-      [PosAlign alignImage = PosAlign.center]) async {
+  Future<void> image(
+    Uint8List imageBytes, [
+    PosAlign alignImage = PosAlign.center,
+  ]) async {
     if (printerType == PrinterType.bluetooth ||
         printerType == PrinterType.imin) {
       bluetoothAndroid!.printImageBytes(imageBytes);
       bluetoothAndroid!.printNewLine();
-      final profile = await CapabilityProfile.load();
-      _generator = Generator(paperSize!, profile, spaceBetweenRows: 5);
-      final listData = _generator.emptyLines(1);
-      printerDataBytes += listData;
+      _generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
     }
     if (printerType == PrinterType.lan) {
       final Image? image = decodeImage(imageBytes);
