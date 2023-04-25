@@ -46,7 +46,7 @@ class PosPrinter {
   fb.BluetoothDevice? _bluetoothDeviceIOS;
 
   Socket? _socket;
-  late Generator _generator;
+  late final Generator _generator;
 
   // ************************ Scan Bluetooth Device ************************
 
@@ -325,7 +325,7 @@ class PosPrinter {
       bluetoothAndroid!.paperCut();
       // bluetoothAndroid!.disconnect();
       // connectToDevice(device: selectedBluetoothDevice);
-      _generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
+      // _generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
     }
     if (printerType == PrinterType.lan) {
       _socket!.add(
