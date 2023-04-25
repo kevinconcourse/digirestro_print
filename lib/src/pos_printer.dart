@@ -283,6 +283,9 @@ class PosPrinter {
         printerType == PrinterType.imin) {
       bluetoothAndroid!.printImageBytes(imageBytes);
       bluetoothAndroid!.printLeftRight('', '', 2);
+      row([
+        PosColumn(width: 12, text: 'TEST'),
+      ]);
     }
     if (printerType == PrinterType.lan) {
       final Image? image = decodeImage(imageBytes);
