@@ -283,7 +283,7 @@ class PosPrinter {
         printerType == PrinterType.imin) {
       bluetoothAndroid!.printImageBytes(imageBytes);
       bluetoothAndroid!.printNewLine();
-      bluetoothAndroid!.printNewLine();
+      await bluetoothAndroid!.printNewLine();
     }
     if (printerType == PrinterType.lan) {
       final Image? image = decodeImage(imageBytes);
