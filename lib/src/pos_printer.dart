@@ -292,6 +292,7 @@ class PosPrinter {
           image,
           align: alignImage,
         ));
+        _socket!.drain();
       }
     }
     _generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
