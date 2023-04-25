@@ -292,8 +292,6 @@ class PosPrinter {
           image,
           align: alignImage,
         ));
-        final profile = await CapabilityProfile.load();
-        _generator = Generator(paperSize!, profile, spaceBetweenRows: 5);
       }
     }
   }
