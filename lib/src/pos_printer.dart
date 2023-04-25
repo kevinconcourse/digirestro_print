@@ -284,15 +284,16 @@ class PosPrinter {
       await bluetoothAndroid!.printImageBytes(imageBytes);
     }
     if (printerType == PrinterType.lan) {
-      final generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
       final Image? image = decodeImage(imageBytes);
 
       ///TEST
       if (image != null) {
-        _socket!.add(generator.image(
+        _socket!.add(_generator.image(
           image,
           align: alignImage,
         ));
+        final profile = await CapabilityProfile.load();
+        _generator = Generator(paperSize!, profile, spaceBetweenRows: 5);
       }
     }
   }
