@@ -325,8 +325,7 @@ class PosPrinter {
       bluetoothAndroid!.paperCut();
       // bluetoothAndroid!.disconnect();
       // connectToDevice(device: selectedBluetoothDevice);
-      final profile = await CapabilityProfile.load();
-      _generator = Generator(paperSize!, profile, spaceBetweenRows: 5);
+      _generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
     }
     if (printerType == PrinterType.lan) {
       _socket!.add(
