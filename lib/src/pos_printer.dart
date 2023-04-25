@@ -276,7 +276,7 @@ class PosPrinter {
   }
 
   Future<void> image(
-    Uint8List imageBytes, [
+    Uint8List? imageBytes, [
     PosAlign alignImage = PosAlign.center,
     String path = '',
   ]) async {
@@ -288,7 +288,7 @@ class PosPrinter {
       // _generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
     }
     if (printerType == PrinterType.lan) {
-      final Image? image = decodeImage(imageBytes);
+      final Image? image = decodeImage(imageBytes!);
 
       ///TEST
       if (image != null) {
