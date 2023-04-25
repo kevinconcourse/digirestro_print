@@ -46,7 +46,7 @@ class PosPrinter {
   fb.BluetoothDevice? _bluetoothDeviceIOS;
 
   Socket? _socket;
-  late final Generator _generator;
+  late Generator _generator;
 
   // ************************ Scan Bluetooth Device ************************
 
