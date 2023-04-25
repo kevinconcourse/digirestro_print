@@ -281,8 +281,7 @@ class PosPrinter {
   ]) async {
     if (printerType == PrinterType.bluetooth ||
         printerType == PrinterType.imin) {
-      bluetoothAndroid!.printImageBytes(imageBytes);
-      // _generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
+      await bluetoothAndroid!.printImageBytes(imageBytes);
     }
     if (printerType == PrinterType.lan) {
       final Image? image = decodeImage(imageBytes);
@@ -295,6 +294,7 @@ class PosPrinter {
         ));
       }
     }
+    _generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
   }
 
   Future<void> qrCode(
@@ -324,7 +324,7 @@ class PosPrinter {
       bluetoothAndroid!.paperCut();
       // bluetoothAndroid!.disconnect();
       // connectToDevice(device: selectedBluetoothDevice);
-      // _generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
+      _generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
     }
     if (printerType == PrinterType.lan) {
       _socket!.add(
