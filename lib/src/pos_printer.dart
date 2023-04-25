@@ -376,7 +376,9 @@ class PosPrinter {
         }
         if (Platform.isAndroid) {
           bluetoothAndroid!.writeBytes(Uint8List.fromList(printerDataBytes));
-          bluetoothAndroid!.paperCut();
+          if (!hasQr) {
+            bluetoothAndroid!.paperCut();
+          }
         } else {
           final List<fb.BluetoothService> bluetoothServices =
               await _bluetoothDeviceIOS?.discoverServices() ??
