@@ -376,10 +376,6 @@ class PosPrinter {
         }
         if (Platform.isAndroid) {
           bluetoothAndroid!.writeBytes(Uint8List.fromList(printerDataBytes));
-          bluetoothAndroid!.printNewLine();
-          bluetoothAndroid!.printNewLine();
-          bluetoothAndroid!.printNewLine();
-          bluetoothAndroid!.printNewLine();
           bluetoothAndroid!.paperCut();
         } else {
           final List<fb.BluetoothService> bluetoothServices =
@@ -400,6 +396,12 @@ class PosPrinter {
       }
     } catch (e) {
       rethrow;
+    }
+  }
+
+  void addBluetoohLines(int lines) {
+    for (int i = 0; i < lines; i++) {
+      bluetoothAndroid!.printNewLine();
     }
   }
 }
