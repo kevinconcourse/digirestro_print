@@ -84,16 +84,16 @@ class PosPrinter {
         if (!await fb.FlutterBluePlus.instance.isOn) {
           throw Exception('Please turn on Bluetooth');
         }
-        // await bluetoothIos?.startScan(
-        //   timeout: const Duration(seconds: 5),
-        // );
-        // bluetoothIos?.scanResults.listen((List<fb.ScanResult> scanResults) {
-        //   for (final fb.ScanResult scanResult in scanResults) {
-        //     resultDevices.add(scanResult.device);
-        //   }
-        // });
-        final connectedDevices = await bluetoothIos?.connectedDevices;
-        resultDevices.addAll(connectedDevices ?? []);
+        await bluetoothIos?.startScan(
+          timeout: const Duration(seconds: 5),
+        );
+        bluetoothIos?.scanResults.listen((List<fb.ScanResult> scanResults) {
+          for (final fb.ScanResult scanResult in scanResults) {
+            resultDevices.add(scanResult.device);
+          }
+        });
+        // final connectedDevices = await bluetoothIos?.connectedDevices;
+        resultDevices.addAll(resultDevices);
         await bluetoothIos?.stopScan();
         pairedDeviceList = resultDevices
             .toSet()
