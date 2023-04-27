@@ -117,16 +117,15 @@ class PosPrinter {
         // final connectedDevices = await bluetoothIos?.connectedDevices;
         resultDevices.addAll(resultDevices);
         await bluetoothIos?.stopScan();
-        pairedDeviceList = (resultDevices
-                .map(
-                  (fb.BluetoothDevice bluetoothDevice) async => BlueDevice(
-                    name: bluetoothDevice.name,
-                    address: bluetoothDevice.id.id,
-                    type: bluetoothDevice.type.index,
-                  ),
-                )
-                .toList())
-            .cast<BlueDevice>();
+        pairedDeviceList = resultDevices
+            .map(
+              (fb.BluetoothDevice bluetoothDevice) => BlueDevice(
+                name: bluetoothDevice.name,
+                address: bluetoothDevice.id.id,
+                type: bluetoothDevice.type.index,
+              ),
+            )
+            .toList();
       }
       return pairedDeviceList;
     } catch (e) {
