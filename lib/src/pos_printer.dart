@@ -106,6 +106,7 @@ class PosPrinter {
 
         await bluetoothIos?.startScan(
           scanMode: scanModeType,
+          macAddresses: ['00:01:90:88:B5:F1'],
           timeout: const Duration(seconds: 10),
         );
         bluetoothIos?.scanResults.listen((List<fb.ScanResult> scanResults) {
