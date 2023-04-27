@@ -80,28 +80,39 @@ class PosPrinter {
       // || ANDROID || //
       else if (Platform.isIOS) {
         bluetoothIos = fb.FlutterBluePlus.instance;
-        final List<fb.BluetoothDevice> resultDevices = <fb.BluetoothDevice>[];
+        // final List<fb.BluetoothDevice> resultDevices = <fb.BluetoothDevice>[];
         if (!await fb.FlutterBluePlus.instance.isOn) {
           throw Exception('Please turn on Bluetooth');
         }
-        await bluetoothIos?.startScan(
-          timeout: const Duration(seconds: 5),
-        );
-        bluetoothIos?.scanResults.listen((List<fb.ScanResult> scanResults) {
-          for (final fb.ScanResult scanResult in scanResults) {
-            resultDevices.add(scanResult.device);
-          }
-        });
+        // await bluetoothIos?.startScan(
+        //   timeout: const Duration(seconds: 5),
+        // );
+        // bluetoothIos?.scanResults.listen((List<fb.ScanResult> scanResults) {
+        //   for (final fb.ScanResult scanResult in scanResults) {
+        //     resultDevices.add(scanResult.device);
+        //   }
+        // });
         // final connectedDevices = await bluetoothIos?.connectedDevices;
-        resultDevices.addAll(resultDevices);
-        await bluetoothIos?.stopScan();
+        // resultDevices.addAll(resultDevices);
+        // await bluetoothIos?.stopScan();
+        // pairedDeviceList = resultDevices
+        //     .toSet()
+        //     .toList()
+        //     .map(
+        //       (fb.BluetoothDevice bluetoothDevice) => BlueDevice(
+        //         address: bluetoothDevice.id.id,
+        //         name: bluetoothDevice.name,
+        //         type: bluetoothDevice.type.index,
+        //       ),
+        //     )
+        //     .toList();
+        final List<fb.BluetoothDevice> resultDevices =
+            await bluetoothIos!.connectedDevices;
         pairedDeviceList = resultDevices
-            .toSet()
-            .toList()
             .map(
               (fb.BluetoothDevice bluetoothDevice) => BlueDevice(
-                address: bluetoothDevice.id.id,
                 name: bluetoothDevice.name,
+                address: bluetoothDevice.id.id,
                 type: bluetoothDevice.type.index,
               ),
             )
