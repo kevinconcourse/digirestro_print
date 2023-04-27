@@ -54,7 +54,9 @@ class PosPrinter {
   // ************************ Scan Bluetooth Device ************************
 
   /// Use this function only for [bluetooth printers]
-  Future<List<BlueDevice>> scanForDevices() async {
+  Future<List<BlueDevice>> scanForDevices({
+    int scanMode = 2,
+  }) async {
     /// We dont need to `scan` for `lan` printers
     /// because we have pre-configuration of `Lan Printers`.
     try {
@@ -84,8 +86,27 @@ class PosPrinter {
         if (!await fb.FlutterBluePlus.instance.isOn) {
           throw Exception('Please turn on Bluetooth');
         }
+        // static const lowPower = ScanMode(0);
+        // static const balanced = ScanMode(1);
+        // static const lowLatency = ScanMode(2);
+        // static const opportunistic = ScanMode(-1);
+        late fb.ScanMode scanModeType;
+        if (scanMode == 0) {
+          scanModeType = fb.ScanMode.lowPower;
+        }
+        if (scanMode == 1) {
+          scanModeType = fb.ScanMode.balanced;
+        }
+        if (scanMode == 2) {
+          scanModeType = fb.ScanMode.lowLatency;
+        }
+        if (scanMode == -1) {
+          scanModeType = fb.ScanMode.opportunistic;
+        }
+
         await bluetoothIos?.startScan(
-          timeout: const Duration(seconds: 5),
+          scanMode: scanModeType,
+          timeout: const Duration(seconds: 10),
         );
         bluetoothIos?.scanResults.listen((List<fb.ScanResult> scanResults) {
           for (final fb.ScanResult scanResult in scanResults) {
