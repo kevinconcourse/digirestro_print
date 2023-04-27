@@ -56,6 +56,7 @@ class PosPrinter {
     /// because we have pre-configuration of `Lan Printers`.
     try {
       List<BlueDevice> pairedDeviceList = [];
+      // || ANDROID || //
       if (Platform.isAndroid) {
         if (!(await bluetoothAndroid!.isOn)!) {
           throw Exception('Please turn on Bluetooth');
@@ -72,22 +73,24 @@ class PosPrinter {
               ),
             )
             .toList();
-      } else if (Platform.isIOS) {
+      }
+      // || ANDROID || //
+      else if (Platform.isIOS) {
         bluetoothIos = fb.FlutterBluePlus.instance;
         final List<fb.BluetoothDevice> resultDevices = <fb.BluetoothDevice>[];
         if (!await fb.FlutterBluePlus.instance.isOn) {
           throw Exception('Please turn on Bluetooth');
         }
-        // await bluetoothIos?.startScan(
-        //   timeout: const Duration(seconds: 5),
-        // );
-        // bluetoothIos?.scanResults.listen((List<fb.ScanResult> scanResults) {
-        //   for (final fb.ScanResult scanResult in scanResults) {
-        //     resultDevices.add(scanResult.device);
-        //   }
-        // });
-        final connectedDevices = await bluetoothIos?.connectedDevices;
-        resultDevices.addAll(connectedDevices ?? []);
+        await bluetoothIos?.startScan(
+          timeout: const Duration(seconds: 5),
+        );
+        bluetoothIos?.scanResults.listen((List<fb.ScanResult> scanResults) {
+          for (final fb.ScanResult scanResult in scanResults) {
+            resultDevices.add(scanResult.device);
+          }
+        });
+        // final connectedDevices = await bluetoothIos?.connectedDevices;
+        resultDevices.addAll(resultDevices);
         await bluetoothIos?.stopScan();
         pairedDeviceList = resultDevices
             .toSet()
