@@ -121,8 +121,7 @@ class PosPrinter {
                 .map(
                   (fb.BluetoothDevice bluetoothDevice) async => BlueDevice(
                     name: bluetoothDevice.name,
-                    address: (await bluetoothDevice.canSendWriteWithoutResponse)
-                        .toString(),
+                    address: bluetoothDevice.id.id,
                     type: bluetoothDevice.type.index,
                   ),
                 )
