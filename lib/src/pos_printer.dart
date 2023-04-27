@@ -48,6 +48,9 @@ class PosPrinter {
   Socket? _socket;
   late Generator _generator;
 
+  /// iOS Bluetooth device list
+  List<BlueDevice> pairedDeviceList = [];
+
   // ************************ Scan Bluetooth Device ************************
 
   /// Use this function only for [bluetooth printers]
@@ -55,7 +58,7 @@ class PosPrinter {
     /// We dont need to `scan` for `lan` printers
     /// because we have pre-configuration of `Lan Printers`.
     try {
-      List<BlueDevice> pairedDeviceList = [];
+      pairedDeviceList = [];
       // || ANDROID || //
       if (Platform.isAndroid) {
         if (!(await bluetoothAndroid!.isOn)!) {
@@ -139,8 +142,8 @@ class PosPrinter {
         if (device == null) {
           return Future<ConnectionStatus>.value(ConnectionStatus.timeout);
         }
-        selectedBluetoothDevice = device;
 
+        selectedBluetoothDevice = device;
         if (Platform.isAndroid) {
           final bt.BluetoothDevice bluetoothDeviceAndroid = bt.BluetoothDevice(
               selectedBluetoothDevice!.name, selectedBluetoothDevice!.address);
@@ -166,11 +169,11 @@ class PosPrinter {
                   selectedBluetoothDevice?.type ?? 0),
             ),
           );
-          final List<fb.BluetoothDevice> connectedDevices =
-              await bluetoothIos?.connectedDevices ?? <fb.BluetoothDevice>[];
+          // final List<fb.BluetoothDevice> connectedDevices =
+          //     await bluetoothIos?.connectedDevices ?? <fb.BluetoothDevice>[];
           final int deviceConnectedIndex =
-              connectedDevices.indexWhere((fb.BluetoothDevice bluetoothDevice) {
-            return bluetoothDevice.id == _bluetoothDeviceIOS?.id;
+              pairedDeviceList.indexWhere((BlueDevice bluetoothDevice) {
+            return bluetoothDevice.name == _bluetoothDeviceIOS?.name;
           });
           if (deviceConnectedIndex < 0) {
             await _bluetoothDeviceIOS?.connect();
