@@ -391,13 +391,29 @@ class PosPrinter {
               bluetoothServices.firstWhere(
             (fb.BluetoothService service) => service.isPrimary,
           );
-          final fb.BluetoothCharacteristic characteristic =
-              bluetoothService.characteristics.firstWhere(
-            (fb.BluetoothCharacteristic bluetoothCharacteristic) =>
-                bluetoothCharacteristic.properties.write,
-          );
-          await characteristic.write(Uint8List.fromList(printerDataBytes),
-              withoutResponse: true);
+          final List<fb.BluetoothCharacteristic> writableCharacteristics =
+              bluetoothService.characteristics
+                  .where((fb.BluetoothCharacteristic bluetoothCharacteristic) =>
+                      bluetoothCharacteristic.properties.write == true)
+                  .toList();
+          if (writableCharacteristics.isNotEmpty) {
+            await writableCharacteristics[0]
+                .write(printerDataBytes, withoutResponse: true);
+          } else {
+            final List<fb.BluetoothCharacteristic>
+                writableWithoutResponseCharacteristics = bluetoothService
+                    .characteristics
+                    .where(
+                        (fb.BluetoothCharacteristic bluetoothCharacteristic) =>
+                            bluetoothCharacteristic
+                                .properties.writeWithoutResponse ==
+                            true)
+                    .toList();
+            if (writableWithoutResponseCharacteristics.isNotEmpty) {
+              await writableWithoutResponseCharacteristics[0]
+                  .write(printerDataBytes, withoutResponse: true);
+            }
+          }
         }
       }
     } catch (e) {
