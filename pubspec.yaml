@@ -12,7 +12,7 @@ dependencies:
   esc_pos_utils: ^1.1.0
   flutter:
     sdk: flutter
-  flutter_blue_plus: ^1.4.0
+  flutter_blue_plus: ^1.8.7
   ping_discover_network_forked: ^0.0.1
 
 dev_dependencies:
