@@ -33,9 +33,9 @@ class PosPrinter {
       if (Platform.isAndroid) {
         bluetoothAndroid = bt.BlueThermalPrinter.instance;
       }
-      if (Platform.isIOS) {
-        bluetoothIos = fb.FlutterBluePlus.instance;
-      }
+      // if (Platform.isIOS) {
+      //   bluetoothIos = fb.FlutterBluePlus.instance;
+      // }
     }
   }
 
