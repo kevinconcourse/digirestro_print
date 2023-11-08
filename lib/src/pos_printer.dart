@@ -82,7 +82,7 @@ class PosPrinter {
             )
             .toList();
       } else if (Platform.isIOS) {
-        bluetoothIos = fb.FlutterBluePlus.instance;
+        // bluetoothIos = fb.FlutterBluePlus.instance;
         final List<fb.BluetoothDevice> resultDevices = <fb.BluetoothDevice>[];
         if (!await fb.FlutterBluePlus.instance.isOn) {
           throw Exception('Please turn on Bluetooth');
