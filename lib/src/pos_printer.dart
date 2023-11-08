@@ -83,10 +83,10 @@ class PosPrinter {
             .toList();
       } else if (Platform.isIOS) {
         // bluetoothIos = fb.FlutterBluePlus.instance;
-        final List<fb.BluetoothDevice> resultDevices = <fb.BluetoothDevice>[];
-        if (!await fb.FlutterBluePlus.instance.isOn) {
-          throw Exception('Please turn on Bluetooth');
-        }
+        // final List<fb.BluetoothDevice> resultDevices = <fb.BluetoothDevice>[];
+        // if (!await fb.FlutterBluePlus.instance.isOn) {
+        //   throw Exception('Please turn on Bluetooth');
+        // }
         // await bluetoothIos?.startScan(
         //   timeout: const Duration(seconds: 5),
         // );
@@ -95,20 +95,20 @@ class PosPrinter {
         //     resultDevices.add(scanResult.device);
         //   }
         // });
-        final connectedDevices = await bluetoothIos?.connectedDevices;
-        resultDevices.addAll(connectedDevices ?? []);
-        await bluetoothIos?.stopScan();
-        pairedDeviceList = resultDevices
-            .toSet()
-            .toList()
-            .map(
-              (fb.BluetoothDevice bluetoothDevice) => BlueDevice(
-                address: bluetoothDevice.id.id,
-                name: bluetoothDevice.name,
-                type: bluetoothDevice.type.index,
-              ),
-            )
-            .toList();
+        // final connectedDevices = await bluetoothIos?.connectedDevices;
+        // resultDevices.addAll(connectedDevices ?? []);
+        // await bluetoothIos?.stopScan();
+        // pairedDeviceList = resultDevices
+        //     .toSet()
+        //     .toList()
+        //     .map(
+        //       (fb.BluetoothDevice bluetoothDevice) => BlueDevice(
+        //         address: bluetoothDevice.id.id,
+        //         name: bluetoothDevice.name,
+        //         type: bluetoothDevice.type.index,
+        //       ),
+        //     )
+        //     .toList();
       }
       return pairedDeviceList;
     } catch (e) {
