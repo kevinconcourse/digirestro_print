@@ -5,13 +5,10 @@ import 'package:blue_thermal_printer/blue_thermal_printer.dart' as bt;
 import 'package:digirestro_print/src/enums.dart';
 import 'package:digirestro_print/src/models/device.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fb;
-import 'package:flutter_blue_plus/gen/flutterblueplus.pb.dart' as proto;
 
 class PosPrinter {
   /// This field is library to handle in Android Platform
   bt.BlueThermalPrinter? bluetoothAndroid;
-  fb.FlutterBluePlus? bluetoothIos;
 
   final PrinterType printerType;
 
@@ -22,9 +19,6 @@ class PosPrinter {
     if (printerType == PrinterType.bluetooth) {
       if (Platform.isAndroid) {
         bluetoothAndroid = bt.BlueThermalPrinter.instance;
-      }
-      if (Platform.isIOS) {
-        bluetoothIos = fb.FlutterBluePlus.instance;
       }
     }
   }
@@ -41,7 +35,7 @@ class PosPrinter {
   late BlueDevice? selectedBluetoothDevice;
 
   /// Bluetooth Device model for iOS
-  fb.BluetoothDevice? _bluetoothDeviceIOS;
+  // fb.BluetoothDevice? _bluetoothDeviceIOS;
 
   Socket? _socket;
   late Generator _generator;
@@ -71,33 +65,33 @@ class PosPrinter {
             )
             .toList();
       } else if (Platform.isIOS) {
-        bluetoothIos = fb.FlutterBluePlus.instance;
-        final List<fb.BluetoothDevice> resultDevices = <fb.BluetoothDevice>[];
-        if (!await fb.FlutterBluePlus.instance.isOn) {
-          throw Exception('Please turn on Bluetooth');
-        }
-        // await bluetoothIos?.startScan(
-        //   timeout: const Duration(seconds: 5),
-        // );
-        // bluetoothIos?.scanResults.listen((List<fb.ScanResult> scanResults) {
-        //   for (final fb.ScanResult scanResult in scanResults) {
-        //     resultDevices.add(scanResult.device);
-        //   }
-        // });
-        final connectedDevices = await bluetoothIos?.bondedDevices;
-        resultDevices.addAll(connectedDevices ?? []);
-        await bluetoothIos?.stopScan();
-        pairedDeviceList = resultDevices
-            .toSet()
-            .toList()
-            .map(
-              (fb.BluetoothDevice bluetoothDevice) => BlueDevice(
-                address: bluetoothDevice.id.id,
-                name: bluetoothDevice.name,
-                type: bluetoothDevice.type.index,
-              ),
-            )
-            .toList();
+        // bluetoothIos = fb.FlutterBluePlus.instance;
+        // final List<fb.BluetoothDevice> resultDevices = <fb.BluetoothDevice>[];
+        // if (!await fb.FlutterBluePlus.instance.isOn) {
+        //   throw Exception('Please turn on Bluetooth');
+        // }
+        // // await bluetoothIos?.startScan(
+        // //   timeout: const Duration(seconds: 5),
+        // // );
+        // // bluetoothIos?.scanResults.listen((List<fb.ScanResult> scanResults) {
+        // //   for (final fb.ScanResult scanResult in scanResults) {
+        // //     resultDevices.add(scanResult.device);
+        // //   }
+        // // });
+        // final connectedDevices = await bluetoothIos?.bondedDevices;
+        // resultDevices.addAll(connectedDevices ?? []);
+        // await bluetoothIos?.stopScan();
+        // pairedDeviceList = resultDevices
+        //     .toSet()
+        //     .toList()
+        //     .map(
+        //       (fb.BluetoothDevice bluetoothDevice) => BlueDevice(
+        //         address: bluetoothDevice.id.id,
+        //         name: bluetoothDevice.name,
+        //         type: bluetoothDevice.type.index,
+        //       ),
+        //     )
+        //     .toList();
       }
       return pairedDeviceList;
     } catch (e) {
@@ -153,25 +147,25 @@ class PosPrinter {
           printerDataBytes = [];
           return Future<ConnectionStatus>.value(ConnectionStatus.connected);
         } else {
-          _bluetoothDeviceIOS = fb.BluetoothDevice.fromProto(
-            proto.BluetoothDevice(
-              name: selectedBluetoothDevice?.name ?? '',
-              remoteId: selectedBluetoothDevice?.address ?? '',
-              type: proto.BluetoothDevice_Type.valueOf(
-                  selectedBluetoothDevice?.type ?? 0),
-            ),
-          );
-          final List<fb.BluetoothDevice> connectedDevices =
-              await bluetoothIos?.connectedDevices ?? <fb.BluetoothDevice>[];
-          final int deviceConnectedIndex =
-              connectedDevices.indexWhere((fb.BluetoothDevice bluetoothDevice) {
-            return bluetoothDevice.id == _bluetoothDeviceIOS?.id;
-          });
-          if (deviceConnectedIndex < 0) {
-            await _bluetoothDeviceIOS?.connect();
-          }
-          _isConnected = true;
-          selectedBluetoothDevice?.connected = true;
+          // _bluetoothDeviceIOS = fb.BluetoothDevice.fromProto(
+          //   proto.BluetoothDevice(
+          //     name: selectedBluetoothDevice?.name ?? '',
+          //     remoteId: selectedBluetoothDevice?.address ?? '',
+          //     type: proto.BluetoothDevice_Type.valueOf(
+          //         selectedBluetoothDevice?.type ?? 0),
+          //   ),
+          // );
+          // final List<fb.BluetoothDevice> connectedDevices =
+          //     await bluetoothIos?.connectedDevices ?? <fb.BluetoothDevice>[];
+          // final int deviceConnectedIndex =
+          //     connectedDevices.indexWhere((fb.BluetoothDevice bluetoothDevice) {
+          //   return bluetoothDevice.id == _bluetoothDeviceIOS?.id;
+          // });
+          // if (deviceConnectedIndex < 0) {
+          //   await _bluetoothDeviceIOS?.connect();
+          // }
+          // _isConnected = true;
+          // selectedBluetoothDevice?.connected = true;
           return Future<ConnectionStatus>.value(ConnectionStatus.connected);
         }
       } else if (printerType == PrinterType.imin) {
@@ -215,7 +209,7 @@ class PosPrinter {
           _isConnected = false;
           return Future<ConnectionStatus>.value(ConnectionStatus.disconnect);
         } else {
-          await _bluetoothDeviceIOS?.disconnect();
+          // await _bluetoothDeviceIOS?.disconnect();
           _isConnected = false;
           return Future<ConnectionStatus>.value(ConnectionStatus.disconnect);
         }
@@ -344,20 +338,20 @@ class PosPrinter {
           bluetoothAndroid!.writeBytes(Uint8List.fromList(printerDataBytes));
           bluetoothAndroid!.paperCut();
         } else {
-          final List<fb.BluetoothService> bluetoothServices =
-              await _bluetoothDeviceIOS?.discoverServices() ??
-                  <fb.BluetoothService>[];
-          final fb.BluetoothService bluetoothService =
-              bluetoothServices.firstWhere(
-            (fb.BluetoothService service) => service.isPrimary,
-          );
-          final fb.BluetoothCharacteristic characteristic =
-              bluetoothService.characteristics.firstWhere(
-            (fb.BluetoothCharacteristic bluetoothCharacteristic) =>
-                bluetoothCharacteristic.properties.write,
-          );
-          await characteristic.write(Uint8List.fromList(printerDataBytes),
-              withoutResponse: true);
+          // final List<fb.BluetoothService> bluetoothServices =
+          //     await _bluetoothDeviceIOS?.discoverServices() ??
+          //         <fb.BluetoothService>[];
+          // final fb.BluetoothService bluetoothService =
+          //     bluetoothServices.firstWhere(
+          //   (fb.BluetoothService service) => service.isPrimary,
+          // );
+          // final fb.BluetoothCharacteristic characteristic =
+          //     bluetoothService.characteristics.firstWhere(
+          //   (fb.BluetoothCharacteristic bluetoothCharacteristic) =>
+          //       bluetoothCharacteristic.properties.write,
+          // );
+          // await characteristic.write(Uint8List.fromList(printerDataBytes),
+          //     withoutResponse: true);
         }
       }
     } catch (e) {
