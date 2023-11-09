@@ -7,7 +7,6 @@ import 'package:digirestro_print/src/models/device.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fb;
 // import 'package:flutter_blue_plus/gen/flutterblueplus.pb.dart' as proto;
-import 'package:image/image.dart';
 
 class PosPrinter {
   /// This field is library to handle in Android Platform
@@ -285,60 +284,60 @@ class PosPrinter {
     }
   }
 
-  Future<void> image(
-    Uint8List imageBytes, [
-    PosAlign alignImage = PosAlign.center,
-  ]) async {
-    if (printerType == PrinterType.bluetooth ||
-        printerType == PrinterType.imin) {
-      bluetoothAndroid!.printImageBytes(imageBytes);
-    }
-    if (printerType == PrinterType.lan) {
-      final Image? image = decodeImage(imageBytes);
+  // Future<void> image(
+  //   Uint8List imageBytes, [
+  //   PosAlign alignImage = PosAlign.center,
+  // ]) async {
+  //   if (printerType == PrinterType.bluetooth ||
+  //       printerType == PrinterType.imin) {
+  //     bluetoothAndroid!.printImageBytes(imageBytes);
+  //   }
+  //   if (printerType == PrinterType.lan) {
+  //     final Image? image = decodeImage(imageBytes);
 
-      ///TEST
-      if (image != null) {
-        _socket!.add(_generator.image(
-          image,
-          align: alignImage,
-        ));
-      }
-    }
-  }
+  //     ///TEST
+  //     if (image != null) {
+  //       _socket!.add(_generator.image(
+  //         image,
+  //         align: alignImage,
+  //       ));
+  //     }
+  //   }
+  // }
 
-  Future<void> qrCode(
-    String qrCodeText, {
-    PosAlign align = PosAlign.center,
-    QRSize size = QRSize.Size4,
-    QRCorrection cor = QRCorrection.L,
-    int width = 300,
-    int height = 300,
-  }) async {
-    if (qrCodeText.isEmpty) {
-      return;
-    }
-    if (printerType == PrinterType.bluetooth ||
-        printerType == PrinterType.imin) {
-      /// 1 Stands for Align Center
-      bluetoothAndroid!.printQRcode(
-        qrCodeText,
-        width,
-        height,
-        1,
-      );
-      bluetoothAndroid!.printNewLine();
-      bluetoothAndroid!.printNewLine();
-      bluetoothAndroid!.printNewLine();
-      bluetoothAndroid!.printNewLine();
-      bluetoothAndroid!.paperCut();
-      // bluetoothAndroid!.disconnect();
-      // connectToDevice(device: selectedBluetoothDevice);
-    }
-    if (printerType == PrinterType.lan) {
-      _socket!.add(
-          _generator.qrcode(qrCodeText, align: align, size: size, cor: cor));
-    }
-  }
+  // Future<void> qrCode(
+  //   String qrCodeText, {
+  //   PosAlign align = PosAlign.center,
+  //   QRSize size = QRSize.Size4,
+  //   QRCorrection cor = QRCorrection.L,
+  //   int width = 300,
+  //   int height = 300,
+  // }) async {
+  //   if (qrCodeText.isEmpty) {
+  //     return;
+  //   }
+  //   if (printerType == PrinterType.bluetooth ||
+  //       printerType == PrinterType.imin) {
+  //     /// 1 Stands for Align Center
+  //     bluetoothAndroid!.printQRcode(
+  //       qrCodeText,
+  //       width,
+  //       height,
+  //       1,
+  //     );
+  //     bluetoothAndroid!.printNewLine();
+  //     bluetoothAndroid!.printNewLine();
+  //     bluetoothAndroid!.printNewLine();
+  //     bluetoothAndroid!.printNewLine();
+  //     bluetoothAndroid!.paperCut();
+  //     // bluetoothAndroid!.disconnect();
+  //     // connectToDevice(device: selectedBluetoothDevice);
+  //   }
+  //   if (printerType == PrinterType.lan) {
+  //     _socket!.add(
+  //         _generator.qrcode(qrCodeText, align: align, size: size, cor: cor));
+  //   }
+  // }
 
   void text(
     String text, {
