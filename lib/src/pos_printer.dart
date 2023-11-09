@@ -305,39 +305,39 @@ class PosPrinter {
   //   }
   // }
 
-  // Future<void> qrCode(
-  //   String qrCodeText, {
-  //   PosAlign align = PosAlign.center,
-  //   QRSize size = QRSize.Size4,
-  //   QRCorrection cor = QRCorrection.L,
-  //   int width = 300,
-  //   int height = 300,
-  // }) async {
-  //   if (qrCodeText.isEmpty) {
-  //     return;
-  //   }
-  //   if (printerType == PrinterType.bluetooth ||
-  //       printerType == PrinterType.imin) {
-  //     /// 1 Stands for Align Center
-  //     bluetoothAndroid!.printQRcode(
-  //       qrCodeText,
-  //       width,
-  //       height,
-  //       1,
-  //     );
-  //     bluetoothAndroid!.printNewLine();
-  //     bluetoothAndroid!.printNewLine();
-  //     bluetoothAndroid!.printNewLine();
-  //     bluetoothAndroid!.printNewLine();
-  //     bluetoothAndroid!.paperCut();
-  //     // bluetoothAndroid!.disconnect();
-  //     // connectToDevice(device: selectedBluetoothDevice);
-  //   }
-  //   if (printerType == PrinterType.lan) {
-  //     _socket!.add(
-  //         _generator.qrcode(qrCodeText, align: align, size: size, cor: cor));
-  //   }
-  // }
+  Future<void> qrCode(
+    String qrCodeText, {
+    PosAlign align = PosAlign.center,
+    QRSize size = QRSize.Size4,
+    QRCorrection cor = QRCorrection.L,
+    int width = 300,
+    int height = 300,
+  }) async {
+    if (qrCodeText.isEmpty) {
+      return;
+    }
+    if (printerType == PrinterType.bluetooth ||
+        printerType == PrinterType.imin) {
+      /// 1 Stands for Align Center
+      bluetoothAndroid!.printQRcode(
+        qrCodeText,
+        width,
+        height,
+        1,
+      );
+      bluetoothAndroid!.printNewLine();
+      bluetoothAndroid!.printNewLine();
+      bluetoothAndroid!.printNewLine();
+      bluetoothAndroid!.printNewLine();
+      bluetoothAndroid!.paperCut();
+      // bluetoothAndroid!.disconnect();
+      // connectToDevice(device: selectedBluetoothDevice);
+    }
+    if (printerType == PrinterType.lan) {
+      _socket!.add(
+          _generator.qrcode(qrCodeText, align: align, size: size, cor: cor));
+    }
+  }
 
   void text(
     String text, {
