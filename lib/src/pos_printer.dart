@@ -7,7 +7,6 @@ import 'package:digirestro_print/src/models/device.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fb;
 // import 'package:flutter_blue_plus/gen/flutterblueplus.pb.dart' as proto;
-import 'package:image/image.dart';
 
 class PosPrinter {
   /// This field is library to handle in Android Platform
@@ -285,26 +284,26 @@ class PosPrinter {
     }
   }
 
-  Future<void> image(
-    Uint8List imageBytes, [
-    PosAlign alignImage = PosAlign.center,
-  ]) async {
-    if (printerType == PrinterType.bluetooth ||
-        printerType == PrinterType.imin) {
-      bluetoothAndroid!.printImageBytes(imageBytes);
-    }
-    if (printerType == PrinterType.lan) {
-      final Image? image = decodeImage(imageBytes);
+  // Future<void> image(
+  //   Uint8List imageBytes, [
+  //   PosAlign alignImage = PosAlign.center,
+  // ]) async {
+  //   if (printerType == PrinterType.bluetooth ||
+  //       printerType == PrinterType.imin) {
+  //     bluetoothAndroid!.printImageBytes(imageBytes);
+  //   }
+  //   if (printerType == PrinterType.lan) {
+  //     final Image? image = decodeImage(imageBytes);
 
-      ///TEST
-      if (image != null) {
-        _socket!.add(_generator.image(
-          image,
-          align: alignImage,
-        ));
-      }
-    }
-  }
+  //     ///TEST
+  //     if (image != null) {
+  //       _socket!.add(_generator.image(
+  //         image,
+  //         align: alignImage,
+  //       ));
+  //     }
+  //   }
+  // }
 
   Future<void> qrCode(
     String qrCodeText, {
