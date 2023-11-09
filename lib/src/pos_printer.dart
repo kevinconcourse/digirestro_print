@@ -5,12 +5,25 @@ import 'package:blue_thermal_printer/blue_thermal_printer.dart' as bt;
 import 'package:digirestro_print/src/enums.dart';
 import 'package:digirestro_print/src/models/device.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fb;
+// import 'package:flutter_blue_plus/gen/flutterblueplus.pb.dart' as proto;
+import 'package:image/image.dart';
 
 class PosPrinter {
   /// This field is library to handle in Android Platform
   bt.BlueThermalPrinter? bluetoothAndroid;
+  fb.FlutterBluePlus? bluetoothIos;
 
   final PrinterType printerType;
+
+  // static BluetoothCharacteristic _phoneToVmi(DeviceIdentifier remoteId) {
+  // final BmBluetoothCharacteristic phoneToVmiCharac = BmBluetoothCharacteristic(
+  //     "remoteId": remoteId.toString(),
+  //     "serviceUuid": 'XXXXX',
+  //     "uuid" = 'XXXXX',
+  //       ....
+  // return BluetoothCharacteristic.fromProto(phoneToVmiCharac);
+  // }
 
   PosPrinter({
     required this.printerType,
@@ -20,10 +33,14 @@ class PosPrinter {
       if (Platform.isAndroid) {
         bluetoothAndroid = bt.BlueThermalPrinter.instance;
       }
+      // if (Platform.isIOS) {
+      //   bluetoothIos = fb.FlutterBluePlus.instance;
+      // }
     }
   }
 
   final PaperSize? paperSize;
+  CapabilityProfile? profile;
 
   /// State to get printer is connected
   bool _isConnected = false;
@@ -35,7 +52,7 @@ class PosPrinter {
   late BlueDevice? selectedBluetoothDevice;
 
   /// Bluetooth Device model for iOS
-  // fb.BluetoothDevice? _bluetoothDeviceIOS;
+  fb.BluetoothDevice? _bluetoothDeviceIOS;
 
   Socket? _socket;
   late Generator _generator;
@@ -70,15 +87,15 @@ class PosPrinter {
         // if (!await fb.FlutterBluePlus.instance.isOn) {
         //   throw Exception('Please turn on Bluetooth');
         // }
-        // // await bluetoothIos?.startScan(
-        // //   timeout: const Duration(seconds: 5),
-        // // );
-        // // bluetoothIos?.scanResults.listen((List<fb.ScanResult> scanResults) {
-        // //   for (final fb.ScanResult scanResult in scanResults) {
-        // //     resultDevices.add(scanResult.device);
-        // //   }
-        // // });
-        // final connectedDevices = await bluetoothIos?.bondedDevices;
+        // await bluetoothIos?.startScan(
+        //   timeout: const Duration(seconds: 5),
+        // );
+        // bluetoothIos?.scanResults.listen((List<fb.ScanResult> scanResults) {
+        //   for (final fb.ScanResult scanResult in scanResults) {
+        //     resultDevices.add(scanResult.device);
+        //   }
+        // });
+        // final connectedDevices = await bluetoothIos?.connectedDevices;
         // resultDevices.addAll(connectedDevices ?? []);
         // await bluetoothIos?.stopScan();
         // pairedDeviceList = resultDevices
@@ -108,8 +125,8 @@ class PosPrinter {
     String? ipAddress,
   }) async {
     try {
-      final profile = await CapabilityProfile.load();
-      _generator = Generator(paperSize!, profile, spaceBetweenRows: 40);
+      profile = await CapabilityProfile.load();
+      _generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
 
       /// CONNECTION TO [LAN]
       if (printerType == PrinterType.lan) {
@@ -147,6 +164,7 @@ class PosPrinter {
           printerDataBytes = [];
           return Future<ConnectionStatus>.value(ConnectionStatus.connected);
         } else {
+          return Future<ConnectionStatus>.value(ConnectionStatus.connected);
           // _bluetoothDeviceIOS = fb.BluetoothDevice.fromProto(
           //   proto.BluetoothDevice(
           //     name: selectedBluetoothDevice?.name ?? '',
@@ -159,14 +177,14 @@ class PosPrinter {
           //     await bluetoothIos?.connectedDevices ?? <fb.BluetoothDevice>[];
           // final int deviceConnectedIndex =
           //     connectedDevices.indexWhere((fb.BluetoothDevice bluetoothDevice) {
-          //   return bluetoothDevice.id == _bluetoothDeviceIOS?.id;
+          //   return bluetoothDevice.remoteId == _bluetoothDeviceIOS?.remoteId;
           // });
           // if (deviceConnectedIndex < 0) {
           //   await _bluetoothDeviceIOS?.connect();
           // }
           // _isConnected = true;
           // selectedBluetoothDevice?.connected = true;
-          return Future<ConnectionStatus>.value(ConnectionStatus.connected);
+          // return Future<ConnectionStatus>.value(ConnectionStatus.connected);
         }
       } else if (printerType == PrinterType.imin) {
         /// CONNECTION TO [iMIN] Device
@@ -209,7 +227,7 @@ class PosPrinter {
           _isConnected = false;
           return Future<ConnectionStatus>.value(ConnectionStatus.disconnect);
         } else {
-          // await _bluetoothDeviceIOS?.disconnect();
+          await _bluetoothDeviceIOS?.disconnect();
           _isConnected = false;
           return Future<ConnectionStatus>.value(ConnectionStatus.disconnect);
         }
@@ -229,7 +247,9 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    printerDataBytes += listData;
+    if (printerType == PrinterType.bluetooth) {
+      printerDataBytes += listData;
+    }
   }
 
   void cut({PosCutMode mode = PosCutMode.full}) {
@@ -238,8 +258,9 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-
-    printerDataBytes += listData;
+    if (printerType == PrinterType.bluetooth) {
+      printerDataBytes += listData;
+    }
   }
 
   void feed(int n) {
@@ -248,9 +269,9 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    // if (printerType == PrinterType.bluetooth) {
-    // }
-    printerDataBytes += listData;
+    if (printerType == PrinterType.bluetooth) {
+      printerDataBytes += listData;
+    }
   }
 
   void emptyLines(int n) {
@@ -259,9 +280,64 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    // if (printerType == PrinterType.bluetooth) {
-    // }
-    printerDataBytes += listData;
+    if (printerType == PrinterType.bluetooth) {
+      printerDataBytes += listData;
+    }
+  }
+
+  Future<void> image(
+    Uint8List imageBytes, [
+    PosAlign alignImage = PosAlign.center,
+  ]) async {
+    if (printerType == PrinterType.bluetooth ||
+        printerType == PrinterType.imin) {
+      bluetoothAndroid!.printImageBytes(imageBytes);
+    }
+    if (printerType == PrinterType.lan) {
+      final Image? image = decodeImage(imageBytes);
+
+      ///TEST
+      if (image != null) {
+        _socket!.add(_generator.image(
+          image,
+          align: alignImage,
+        ));
+      }
+    }
+  }
+
+  Future<void> qrCode(
+    String qrCodeText, {
+    PosAlign align = PosAlign.center,
+    QRSize size = QRSize.Size4,
+    QRCorrection cor = QRCorrection.L,
+    int width = 300,
+    int height = 300,
+  }) async {
+    if (qrCodeText.isEmpty) {
+      return;
+    }
+    if (printerType == PrinterType.bluetooth ||
+        printerType == PrinterType.imin) {
+      /// 1 Stands for Align Center
+      bluetoothAndroid!.printQRcode(
+        qrCodeText,
+        width,
+        height,
+        1,
+      );
+      bluetoothAndroid!.printNewLine();
+      bluetoothAndroid!.printNewLine();
+      bluetoothAndroid!.printNewLine();
+      bluetoothAndroid!.printNewLine();
+      bluetoothAndroid!.paperCut();
+      // bluetoothAndroid!.disconnect();
+      // connectToDevice(device: selectedBluetoothDevice);
+    }
+    if (printerType == PrinterType.lan) {
+      _socket!.add(
+          _generator.qrcode(qrCodeText, align: align, size: size, cor: cor));
+    }
   }
 
   void text(
@@ -280,27 +356,10 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    // if (printerType == PrinterType.bluetooth) {
-    // }
-    printerDataBytes += listData;
+    if (printerType == PrinterType.bluetooth) {
+      printerDataBytes += listData;
+    }
   }
-
-  // void image(
-  //   Uint8List imageBytes,
-  // ) {
-  //   try {
-  //     final Uint8List bytes = imageBytes;
-  //     final Image image = decodeImage(bytes)!;
-
-  //     final listData = _generator.image(image);
-
-  //     if (printerType == PrinterType.lan) {
-  //       _socket!.add(listData);
-  //     }
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
 
   void row(List<PosColumn> cols) {
     final listData = _generator.row(cols);
@@ -308,23 +367,12 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    // if (printerType == PrinterType.bluetooth) {
-    // }
-    printerDataBytes += listData;
-  }
-
-  Future<void> printImage({required Uint8List bytes}) async {
-    try {
-      if (Platform.isAndroid) {
-        bluetoothAndroid!.printImageBytes(bytes);
-        bluetoothAndroid!.paperCut();
-      }
-    } catch (e) {
-      rethrow;
+    if (printerType == PrinterType.bluetooth) {
+      printerDataBytes += listData;
     }
   }
 
-  Future<void> printReceipt() async {
+  Future<void> printReceipt([bool hasQr = false]) async {
     try {
       if (printerType == PrinterType.bluetooth) {
         if (selectedBluetoothDevice == null) {
@@ -336,26 +384,34 @@ class PosPrinter {
         }
         if (Platform.isAndroid) {
           bluetoothAndroid!.writeBytes(Uint8List.fromList(printerDataBytes));
-          bluetoothAndroid!.paperCut();
+          if (!hasQr) {
+            bluetoothAndroid!.paperCut();
+          }
         } else {
-          // final List<fb.BluetoothService> bluetoothServices =
-          //     await _bluetoothDeviceIOS?.discoverServices() ??
-          //         <fb.BluetoothService>[];
-          // final fb.BluetoothService bluetoothService =
-          //     bluetoothServices.firstWhere(
-          //   (fb.BluetoothService service) => service.isPrimary,
-          // );
-          // final fb.BluetoothCharacteristic characteristic =
-          //     bluetoothService.characteristics.firstWhere(
-          //   (fb.BluetoothCharacteristic bluetoothCharacteristic) =>
-          //       bluetoothCharacteristic.properties.write,
-          // );
-          // await characteristic.write(Uint8List.fromList(printerDataBytes),
-          //     withoutResponse: true);
+          final List<fb.BluetoothService> bluetoothServices =
+              await _bluetoothDeviceIOS?.discoverServices() ??
+                  <fb.BluetoothService>[];
+          final fb.BluetoothService bluetoothService =
+              bluetoothServices.firstWhere(
+            (fb.BluetoothService service) => service.isPrimary,
+          );
+          final fb.BluetoothCharacteristic characteristic =
+              bluetoothService.characteristics.firstWhere(
+            (fb.BluetoothCharacteristic bluetoothCharacteristic) =>
+                bluetoothCharacteristic.properties.write,
+          );
+          await characteristic.write(Uint8List.fromList(printerDataBytes),
+              withoutResponse: true);
         }
       }
     } catch (e) {
       rethrow;
+    }
+  }
+
+  void addBluetoohLines(int lines) {
+    for (int i = 0; i < lines; i++) {
+      bluetoothAndroid!.printNewLine();
     }
   }
 }
