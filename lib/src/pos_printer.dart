@@ -123,10 +123,18 @@ class PosPrinter {
     Duration timeout = const Duration(seconds: 5),
     BlueDevice? device,
     String? ipAddress,
+    int mm80FontSizeA = 48,
+    int mm80FontSizeB = 64,
   }) async {
     try {
       profile = await CapabilityProfile.load();
-      _generator = Generator(paperSize!, profile!, spaceBetweenRows: 5);
+      _generator = Generator(
+        paperSize!,
+        profile!,
+        spaceBetweenRows: 5,
+        mm80FontSizeA: mm80FontSizeA,
+        mm80FontSizeB: mm80FontSizeB,
+      );
 
       /// CONNECTION TO [LAN]
       if (printerType == PrinterType.lan) {
