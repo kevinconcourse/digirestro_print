@@ -94,7 +94,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "55addfb847a7b5b743630a7c858a6e798e3078e8"
+      resolved-ref: f8fb02468fa7943e408e1bd04bc6e63f9e144498
       url: "https://github.com/kevinconcourse/digirestro_esc_pos_utils"
     source: git
     version: "0.0.1"
