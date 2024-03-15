@@ -9,7 +9,10 @@ environment:
 dependencies:
   blue_thermal_printer: ^1.2.3
   esc_pos_printer: ^4.1.0
-  esc_pos_utils: ^1.1.0
+  digirestro_esc_pos_utils:
+    git:
+      url: https://github.com/kevinconcourse/digirestro_esc_pos_utils
+      ref: main
   flutter:
     sdk: flutter
   flutter_blue_plus: ^1.8.7

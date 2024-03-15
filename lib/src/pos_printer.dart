@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart' as bt;
+import 'package:digirestro_esc_pos_utils/digirestro_esc_pos_utils.dart';
 import 'package:digirestro_print/src/enums.dart';
 import 'package:digirestro_print/src/models/device.dart';
 import 'package:flutter/services.dart';
