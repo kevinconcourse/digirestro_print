@@ -197,6 +197,9 @@ class PosPrinter {
       } else if (printerType == PrinterType.imin) {
         /// CONNECTION TO [iMIN] Device
         return Future<ConnectionStatus>.value(ConnectionStatus.connected);
+      } else if (printerType == PrinterType.sunmi) {
+        /// CONNECTION TO [iMIN] Device
+        return Future<ConnectionStatus>.value(ConnectionStatus.connected);
       } else {
         /// RETURN [TIMEOUT] [EXCEPTION]
         _isConnected = false;
@@ -255,7 +258,8 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    if (printerType == PrinterType.bluetooth) {
+    if (printerType == PrinterType.bluetooth ||
+        printerType == PrinterType.sunmi) {
       printerDataBytes += listData;
     }
   }
@@ -266,7 +270,8 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    if (printerType == PrinterType.bluetooth) {
+    if (printerType == PrinterType.bluetooth ||
+        printerType == PrinterType.sunmi) {
       printerDataBytes += listData;
     }
   }
@@ -277,7 +282,8 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    if (printerType == PrinterType.bluetooth) {
+    if (printerType == PrinterType.bluetooth ||
+        printerType == PrinterType.sunmi) {
       printerDataBytes += listData;
     }
   }
@@ -288,7 +294,8 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    if (printerType == PrinterType.bluetooth) {
+    if (printerType == PrinterType.bluetooth ||
+        printerType == PrinterType.sunmi) {
       printerDataBytes += listData;
     }
   }
@@ -364,7 +371,8 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    if (printerType == PrinterType.bluetooth) {
+    if (printerType == PrinterType.bluetooth ||
+        printerType == PrinterType.sunmi) {
       printerDataBytes += listData;
     }
   }
@@ -375,7 +383,8 @@ class PosPrinter {
     if (printerType == PrinterType.lan) {
       _socket!.add(listData);
     }
-    if (printerType == PrinterType.bluetooth) {
+    if (printerType == PrinterType.bluetooth ||
+        printerType == PrinterType.sunmi) {
       printerDataBytes += listData;
     }
   }
@@ -420,6 +429,14 @@ class PosPrinter {
   void addBluetoohLines(int lines) {
     for (int i = 0; i < lines; i++) {
       bluetoothAndroid!.printNewLine();
+    }
+  }
+
+  List<int> printSunmi() {
+    if (printerType == PrinterType.sunmi) {
+      return printerDataBytes;
+    } else {
+      return [];
     }
   }
 }

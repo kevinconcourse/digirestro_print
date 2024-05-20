@@ -1,4 +1,4 @@
-enum PrinterType { bluetooth, lan, imin }
+enum PrinterType { bluetooth, lan, imin, sunmi }
 
 //TEST
 enum ConnectionStatus {
