@@ -276,6 +276,18 @@ class PosPrinter {
     }
   }
 
+  void openDrawer({PosDrawer pin = PosDrawer.pin2}) {
+    final listData = _generator.drawer(pin: pin);
+
+    if (printerType == PrinterType.lan) {
+      _socket!.add(listData);
+    }
+    if (printerType == PrinterType.bluetooth ||
+        printerType == PrinterType.sunmi) {
+      printerDataBytes += listData;
+    }
+  }
+
   void feed(int n) {
     final listData = _generator.feed(n);
 
