@@ -16,3 +16,24 @@ class BlueDevice {
   int? type;
   bool? connected;
 }
+
+class UsbDevice {
+  UsbDevice({
+    this.name,
+    this.vendorId,
+    this.productId,
+    this.serialNumber,
+  });
+
+  /// Name of the USB printer
+  final String? name;
+
+  /// Vendor ID of the USB printer
+  final String? vendorId;
+
+  /// Product ID of the USB printer
+  final String? productId;
+
+  /// Serial number of the USB printer
+  final String? serialNumber;
+}

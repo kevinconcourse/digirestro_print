@@ -1,11 +1,14 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:async';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart' as bt;
 import 'package:digirestro_esc_pos_utils/digirestro_esc_pos_utils.dart';
 import 'package:digirestro_print/src/enums.dart';
 import 'package:digirestro_print/src/models/device.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fb;
+import 'package:flutter_thermal_printer/flutter_thermal_printer.dart' as usb1;
+import 'package:flutter_thermal_printer/utils/printer.dart' as usb;
 // import 'package:flutter_blue_plus/gen/flutterblueplus.pb.dart' as proto;
 import 'package:image/image.dart';
 
@@ -13,6 +16,7 @@ class PosPrinter {
   /// This field is library to handle in Android Platform
   bt.BlueThermalPrinter? bluetoothAndroid;
   fb.FlutterBluePlus? bluetoothIos;
+  usb1.FlutterThermalPrinter? usbPrinter;
 
   final PrinterType printerType;
 
@@ -36,6 +40,8 @@ class PosPrinter {
       // if (Platform.isIOS) {
       //   bluetoothIos = fb.FlutterBluePlus.instance;
       // }
+    } else if (printerType == PrinterType.usb) {
+      usbPrinter = usb1.FlutterThermalPrinter.instance;
     }
   }
 
@@ -56,6 +62,13 @@ class PosPrinter {
 
   Socket? _socket;
   late Generator _generator;
+
+  // USB printer device list and subscription
+  List<usb.Printer> usbPrinters = [];
+  List<UsbDevice> usbDevices = [];
+  StreamSubscription<List<usb.Printer>>? _usbDevicesStreamSubscription;
+
+  usb.Printer? selectedUsbPrinter;
 
   // ************************ Scan Bluetooth Device ************************
 
@@ -449,6 +462,78 @@ class PosPrinter {
       return printerDataBytes;
     } else {
       return [];
+    }
+  }
+
+  /// Scan for USB printers using flutter_thermal_printer
+  Future<void> scanForUsbDevices() async {
+    if (printerType != PrinterType.usb) return;
+    _usbDevicesStreamSubscription?.cancel();
+    await usbPrinter?.getPrinters(connectionTypes: [usb.ConnectionType.USB]);
+    _usbDevicesStreamSubscription = usbPrinter?.devicesStream.listen((event) {
+      usbPrinters = List<usb.Printer>.from(event);
+      usbPrinters.removeWhere((p) {
+        final name = (p as dynamic)?.name;
+        return name == null || name.isEmpty;
+      });
+      usbDevices = usbPrinters.map((p) {
+        final printer = p as dynamic;
+        final name = printer?.name ?? '';
+        final vendorId = printer?.vendorId?.toString();
+        final productId = printer?.productId?.toString();
+        final serialNumber = printer?.serialNumber;
+        return UsbDevice(
+          name: name,
+          vendorId: vendorId,
+          productId: productId,
+          serialNumber: serialNumber,
+        );
+      }).toList();
+      log('USB Devices: ${usbDevices.map((e) => e.name ?? '').toList()}');
+    });
+  }
+
+  /// Connect to a selected USB printer
+  Future<ConnectionStatus> connectToUsbPrinter(usb.Printer printer) async {
+    if (printerType != PrinterType.usb) return ConnectionStatus.timeout;
+    try {
+      final result = await usbPrinter?.connect(printer);
+      if (result == true) {
+        selectedUsbPrinter = printer;
+        _isConnected = true;
+        return ConnectionStatus.connected;
+      } else {
+        _isConnected = false;
+        return ConnectionStatus.timeout;
+      }
+    } catch (e) {
+      _isConnected = false;
+      log('USB Connect Error: $e');
+      return ConnectionStatus.timeout;
+    }
+  }
+
+  /// Disconnect from the connected USB printer
+  Future<ConnectionStatus> disconnectUsbPrinter() async {
+    if (printerType != PrinterType.usb) return ConnectionStatus.timeout;
+    try {
+      await usbPrinter?.disconnect(selectedUsbPrinter!);
+      _isConnected = false;
+      selectedUsbPrinter = null;
+      return ConnectionStatus.disconnect;
+    } catch (e) {
+      log('USB Disconnect Error: $e');
+      return ConnectionStatus.timeout;
+    }
+  }
+
+  /// Print receipt to USB printer
+  Future<void> printUsbReceipt(List<int> bytes) async {
+    if (printerType != PrinterType.usb || selectedUsbPrinter == null) return;
+    try {
+      await usbPrinter?.printData(selectedUsbPrinter!, bytes);
+    } catch (e) {
+      log('USB Print Error: $e');
     }
   }
 }

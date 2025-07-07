@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:digirestro_print/digirestro_print.dart';
-import 'package:esc_pos_utils/esc_pos_utils.dart';
+import 'package:digirestro_esc_pos_utils/digirestro_esc_pos_utils.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -32,8 +32,28 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final PosPrinter posPrinter = PosPrinter(printerType: PrinterType.bluetooth);
+  PrinterType selectedPrinterType = PrinterType.bluetooth;
+  late PosPrinter posPrinter;
   List<BlueDevice> bluetoothDevices = [];
+  List usbPrinters = [];
+  dynamic selectedUsbPrinter;
+
+  @override
+  void initState() {
+    super.initState();
+    posPrinter = PosPrinter(printerType: selectedPrinterType);
+  }
+
+  void updatePrinterType(PrinterType type) {
+    setState(() {
+      selectedPrinterType = type;
+      posPrinter = PosPrinter(printerType: selectedPrinterType);
+      bluetoothDevices = [];
+      usbPrinters = [];
+      selectedUsbPrinter = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,41 +64,88 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            DropdownButton<PrinterType>(
+              value: selectedPrinterType,
+              items: const [
+                DropdownMenuItem(
+                  value: PrinterType.bluetooth,
+                  child: Text('Bluetooth'),
+                ),
+                DropdownMenuItem(
+                  value: PrinterType.usb,
+                  child: Text('USB'),
+                ),
+              ],
+              onChanged: (type) {
+                if (type != null) updatePrinterType(type);
+              },
+            ),
+            if (selectedPrinterType == PrinterType.bluetooth)
+              TextButton(
+                onPressed: () async {
+                  bluetoothDevices = await posPrinter.scanForDevices();
+                  setState(() {});
+                  log(bluetoothDevices.toString());
+                },
+                child: const Text('Scan for Bluetooth devices'),
+              ),
+            if (selectedPrinterType == PrinterType.usb)
+              TextButton(
+                onPressed: () async {
+                  await posPrinter.scanForUsbDevices();
+                  setState(() {
+                    usbPrinters = posPrinter.usbPrinters;
+                  });
+                  log(usbPrinters.toString());
+                },
+                child: const Text('Scan for USB printers'),
+              ),
+            if (selectedPrinterType == PrinterType.bluetooth)
+              TextButton(
+                onPressed: () async {
+                  try {
+                    if (bluetoothDevices.isEmpty) return;
+                    final bluetoothData = await posPrinter.connectToDevice(
+                      device: bluetoothDevices.first,
+                    );
+                    log(bluetoothData.toString());
+                  } catch (e) {
+                    log(e.toString());
+                  }
+                },
+                child: const Text('Connect To Bluetooth Printer'),
+              ),
+            if (selectedPrinterType == PrinterType.usb)
+              Column(
+                children: [
+                  DropdownButton(
+                    value: selectedUsbPrinter,
+                    hint: const Text('Select USB Printer'),
+                    items: usbPrinters.map<DropdownMenuItem>((printer) {
+                      return DropdownMenuItem(
+                        value: printer,
+                        child: Text(printer.name ?? 'Unknown'),
+                      );
+                    }).toList(),
+                    onChanged: (printer) {
+                      setState(() {
+                        selectedUsbPrinter = printer;
+                      });
+                    },
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      if (selectedUsbPrinter == null) return;
+                      final result = await posPrinter
+                          .connectToUsbPrinter(selectedUsbPrinter);
+                      log(result.toString());
+                    },
+                    child: const Text('Connect To USB Printer'),
+                  ),
+                ],
+              ),
             TextButton(
               onPressed: () async {
-                bluetoothDevices = await posPrinter.scanForDevices();
-                setState(() {});
-                log(bluetoothDevices.toString());
-              },
-              child: const Text(
-                'Scan for devices',
-              ),
-            ),
-            TextButton(
-              onPressed: () async {
-                try {
-                  /// GO FOR LAN
-                  // final lanData = await posPrinter.connectToDevice(
-                  //   ipAddress: '192.168.0.133',
-                  // );
-                  // log(lanData.toString());
-
-                  /// GO FOR BLUETOOTH
-
-                  final bluetoothData = await posPrinter.connectToDevice(
-                    device: bluetoothDevices[8],
-                  );
-                  log(bluetoothData.toString());
-                } catch (e) {
-                  log(e.toString());
-                }
-              },
-              child: const Text(
-                'Connect To Printer',
-              ),
-            ),
-            TextButton(
-              onPressed: () {
                 posPrinter.row(
                   [
                     PosColumn(
@@ -162,12 +229,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 posPrinter.feed(1);
                 posPrinter.cut();
 
-                posPrinter.disconnect();
-                posPrinter.printReceipt();
+                if (selectedPrinterType == PrinterType.bluetooth) {
+                  posPrinter.disconnect();
+                  posPrinter.printReceipt();
+                } else if (selectedPrinterType == PrinterType.usb) {
+                  await posPrinter.printUsbReceipt(posPrinter.printerDataBytes);
+                  await posPrinter.disconnectUsbPrinter();
+                }
               },
-              child: const Text(
-                'Test Print',
-              ),
+              child: const Text('Test Print'),
             ),
           ],
         ),
